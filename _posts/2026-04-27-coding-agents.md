@@ -99,7 +99,7 @@ Broadly, an “AI Agent” is a system that autonomously pursues a goal by perce
 
 Coding agents are a specific type of agent designed for software engineering tasks. These agents operate within software development environments (repositories, IDEs, sandboxes, terminals). *Coding agents are unique because they write, execute, and debug their own scripts at runtime,* *instead of being limited to a pre-defined set of tools.* They are especially versatile: they can quickly orient themselves in new software environments by querying for information, installing packages to unlock new capabilities, and resolving errors from logs. This self-governed feedback loop unlocks utility beyond software development: coding agents can theoretically plug-and-play into *any* software environment—offering an interesting pathway to generalizability.  
 <div class="row mt-3 justify-content-center">
-    <div class="col-sm-4 mt-3 mt-md-0">
+    <div class="col-sm-6 mt-3 mt-md-0">
         {% include figure.liquid path="assets/img/2026-04-27-coding-agents/1_Coding_Agent_Architecture.png" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
@@ -192,7 +192,7 @@ We containerize the environment, agent execution, and verification modules separ
 
 We test the agent’s ability to complete real-world business workflows that are commonly found in an ERP. Each task gives the agent a natural-language instruction with an objective, constraints, and a policy rulebook. For example:
 
-Instruction: *TechStart Solutions needs 40 ergonomic chairs within 7 days (budget: $12,000). DesignHub Agency needs 30 chairs within 10 days (budget: $9,000). Handle both orders, allocating stock and creating manufacturing orders as needed.*
+Instruction: *TechStart Solutions needs 40 ergonomic chairs within 7 days (budget: `$12,000`). DesignHub Agency needs 30 chairs within 10 days (budget: `$9,000`). Handle both orders, allocating stock and creating manufacturing orders as needed.*
 
 Policy: *Maintain at least 25% gross margin. Minimize procurement costs. You are not allowed to increase the list price of the finished goods.*
 
