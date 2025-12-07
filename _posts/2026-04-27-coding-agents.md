@@ -41,7 +41,6 @@ toc:
   - name: Introduction
     subsections:
       - name: How Does a Coding Agent Work?
-      - name: Can Coding Agents be General Agents?
   - name: "Defining Success: How Can Coding Agents Accurately Generalize?"
   - name: What Gets Measured Gets Improved
     subsections:
@@ -108,8 +107,6 @@ Coding agents are a specific type of agent designed for software engineering tas
 </div>
 
 Experimentally, past research has shown that training models on code improves general reasoning. For instance, Aryabumi et al. find that adding code data to pre-training yields up to 8.2% relative improvement on natural language reasoning benchmarks.<d-cite key="aryabumi2024codepretraining"></d-cite> Separately, Wang et al. demonstrate that their CodeAct agent, using executable Python scripts, outperformed JSON and text-based tool-calling alternatives with a 20% higher success rate on non-coding tasks.<d-cite key="wang2024codeact"></d-cite> Furthermore, the continued scaling of test-time compute means coding agents are increasingly adept at attacking multi-hour, project-scale tasks.<d-cite key="openai2025gpt51"></d-cite> Practically and experimentally, there is visible potential in applying coding agents to general tasks.
-
-### Can Coding Agents be General Agents?
 
 Given this convergence, we ask: **Can coding agents succeed as general business agents? And if not yet, where do they break down?**
 
