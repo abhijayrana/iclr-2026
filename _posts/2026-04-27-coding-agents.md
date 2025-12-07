@@ -87,7 +87,7 @@ _styles: >
 ---
 ## Introduction
 
-Immediately after the emergence of Transformer-based Language Models (LMs), researchers and developers began exploring LM code generation.<d-cite key="lu2021plbart"></d-cite> With heavy investment into training models specifically on coding data, LMs have seen dramatic improvements in coding capabilities.<d-cite key="chen2021codex"></d-cite> The top score on SWE-Bench Verified, a benchmark testing models on real-world software engineering tasks, jumped from 49% to 78% through 2025\.<d-cite key="jimenez2023swebench"></d-cite><d-cite key="openai2024swebenchverified"></d-cite> The newer Terminal Bench, released in May of 2025, has also tracked frontier LLMs improving from 43% to 61% on complex tasks in the terminal, including analyzing data, calling APIs, and addressing security vulnerabilities.<d-cite key="terminalbench2024"></d-cite> 
+Immediately after the emergence of Transformer-based Language Models (LMs), researchers and developers began exploring LM code generation.<d-cite key="ahmad2021plbart"></d-cite> With heavy investment into training models specifically on coding data, LMs have seen dramatic improvements in coding capabilities.<d-cite key="chen2021codex"></d-cite> The top score on SWE-Bench Verified, a benchmark testing models on real-world software engineering tasks, jumped from 49% to 78% through 2025\.<d-cite key="jimenez2023swebench"></d-cite><d-cite key="openai2024swebenchverified"></d-cite> The newer Terminal Bench, released in May of 2025, has also tracked frontier LLMs improving from 43% to 61% on complex tasks in the terminal, including analyzing data, calling APIs, and addressing security vulnerabilities.<d-cite key="terminalbench2024"></d-cite> 
 
 Propelled by compounding improvement, frontier labs have been developing coding agents, which augment foundation models with a shell sandbox and code editor to help with coding tasks. These agents, including Claude Code, Codex CLI, and Gemini CLI, have seen explosive developer adoption: since launching in May 2025, Claude Code now receives over 4.4 million downloads every week.<d-cite key="anthropic2025claudecode"></d-cite> 
 
@@ -98,10 +98,16 @@ Surprisingly, people are using these coding agents for purposes far beyond the r
 Broadly, an “AI Agent” is a system that autonomously pursues a goal by perceiving its environment, reasoning iteratively, and taking actions, with minimal human intervention. Typically, agents take action through manually predefined tools.<d-cite key="schick2023toolformer"></d-cite> Often, these tools include complex business logic that reduces the reasoning burden on the LM itself. For example, a simple banking agent may be provided: “read\_balance,” “withdraw\_money,” “deposit\_money,” and “transfer\_funds.” In practice, each of these tools would include guardrails to prevent prohibited transactions or incorrect calculations.
 
 Coding agents are a specific type of agent designed for software engineering tasks. These agents operate within software development environments (repositories, IDEs, sandboxes, terminals). *Coding agents are unique because they write, execute, and debug their own scripts at runtime,* *instead of being limited to a pre-defined set of tools.* They are especially versatile: they can quickly orient themselves in new software environments by querying for information, installing packages to unlock new capabilities, and resolving errors from logs. This self-governed feedback loop unlocks utility beyond software development: coding agents can theoretically plug-and-play into *any* software environment—offering an interesting pathway to generalizability.  
-![][1_Coding_Agent_Architecture.png]  
-Figure 1: The coding agent is an emergent agent architecture, which allows a model to create its own code tools at runtime and iterate with the help of code outputs and error logs.
+<div class="row mt-3 justify-content-center">
+    <div class="col-sm-4 mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/2026-04-27-coding-agents/1_Coding_Agent_Architecture.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption text-start">
+    Figure 1: The coding agent is an emergent agent architecture, which allows a model to create its own code tools at runtime and iterate with the help of code outputs and error logs.
+</div>
 
-Experimentally, past research has shown that training models on code improves general reasoning. For instance, Aryabumi et al. find that adding code data to pre-training yields up to 8.2% relative improvement on natural language reasoning benchmarks.<d-cite key="aryabumi2024codepretraining"></d-cite> Separately, Wang et al. demonstrate that their CodeAct agent, using executable Python scripts, outperformed JSON and text-based tool-calling alternatives with a 20% higher success rate on non-coding tasks.<d-cite key="islam2024codeact"></d-cite> Furthermore, the continued scaling of test-time compute means coding agents are increasingly adept at attacking multi-hour, project-scale tasks.<d-cite key="openai2025gpt51"></d-cite> Practically and experimentally, there is visible potential in applying coding agents to general tasks.
+Experimentally, past research has shown that training models on code improves general reasoning. For instance, Aryabumi et al. find that adding code data to pre-training yields up to 8.2% relative improvement on natural language reasoning benchmarks.<d-cite key="aryabumi2024codepretraining"></d-cite> Separately, Wang et al. demonstrate that their CodeAct agent, using executable Python scripts, outperformed JSON and text-based tool-calling alternatives with a 20% higher success rate on non-coding tasks.<d-cite key="wang2024codeact"></d-cite> Furthermore, the continued scaling of test-time compute means coding agents are increasingly adept at attacking multi-hour, project-scale tasks.<d-cite key="openai2025gpt51"></d-cite> Practically and experimentally, there is visible potential in applying coding agents to general tasks.
 
 ### Can Coding Agents be General Agents?
 
@@ -112,7 +118,7 @@ This post makes three contributions:
 1. **A framework for coding-agent generalization.**   
    We propose that success as a general business agent requires bidirectional translation between business/domain and code/software layers, and articulate four concrete capabilities this entails.  
 2. **An evaluation gap analysis.**   
-   We survey prominent benchmarks and show that code-level evals (SWE-bench, Terminal-Bench) lack business context while domain-reasoning evals (τ-bench,<d-cite key="zhang2024taubench"></d-cite> BFCL <d-cite key="gorilla2024bfcl"></d-cite>) lack complex code execution \- leaving full-stack translation underexplored.  
+   We survey prominent benchmarks and show that code-level evals (SWE-bench, Terminal-Bench) lack business context while domain-reasoning evals (τ-bench<d-cite key="yao2024taubench"></d-cite>, BFCL<d-cite key="gorilla2024bfcl"></d-cite>) lack complex code execution \- leaving full-stack translation underexplored.  
 3. **Observations from an ERP case study.**   
    We deploy frontier coding agents on a production-grade Enterprise Resource Planning (ERP) software instance with multi-constraint Sales-to-Fulfilment and HR operational tasks, document distinct failure modes at the business-code boundary, and propose asymmetric feedback from the environment to explain persistent agent overconfidence.
 
@@ -148,9 +154,14 @@ BFCL measures how often models get tool names and arguments right, probing the f
 
 **τ-bench** pushes further by adding policy compliance. An airline agent may handle a user request: *"I want to change my reservation to a different destination."* The agent must gather information through dialogue, consult policy documents about change fees and cabin-class restrictions, and call domain APIs correctly to make the change. This is close to what a real deployment would require, but the underlying, synthetically-generated database and API are intentionally much simpler than real-world business software. 
 
-![][image2]
-
-Figure 2: The critical evaluation gap: Code evaluations lack business context; business evaluations lack code interaction.
+<div class="row mt-3 justify-content-center">
+    <div class="col-sm-8 mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/2026-04-27-coding-agents/2_Critical_Evaluation_Gap.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption text-start">
+    Figure 2: The critical evaluation gap: Code evaluations lack business context; business evaluations lack code interaction.
+</div>
 
 Existing evaluations usually stress one or two capabilities at a time: choosing tools, business reasoning, writing code, or manipulating a complex software system. Few require an agent to do everything end-to-end.
 
@@ -162,9 +173,14 @@ To cover this gap, we ask: *Can a coding agent run business processes end-to-end
 
 An ERP is the single source of truth for businesses’ operations, supporting more than 3.8 million companies worldwide and, by some estimates, underpinning 77% of the world’s transaction revenue. We identified the ERP as our ideal testing ground for “general” business tasks because it contains nearly all core business functions \- finance, HR, supply chain, and customer relationship management \- as native, interdependent modules. In this environment, we can test how the agent completes simple, single-module tasks like onboarding an employee, but also complex, cross-module tasks like fulfilling a customer order end to end. Furthermore, the ERP has certain validation rules built into its software, while a majority of business logic still remains as the agent’s burden. 
 
-![][image3]
-
-Figure 3: An example of a process in an ERP, involving an order-to-delivery workflow.
+<div class="row mt-3 justify-content-center">
+    <div class="col-sm-8 mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/2026-04-27-coding-agents/3_Example_ERP_Process.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption text-start">
+    Figure 3: An example of a process in an ERP, involving an order-to-delivery workflow.
+</div>
 
 ### Environment
 
@@ -182,9 +198,14 @@ Policy: *Maintain at least 25% gross margin. Minimize procurement costs. You are
 
 In each scenario, the agent has to make at least 2 interdependent business decisions while being subject to at least 2 interacting operational constraints. To pass the example scenario above, the agent must query the ERP, determine the optimal fulfillment strategy, and document its solution (as confirmed sales, manufacturing, and purchase orders) \- all through writing and executing code at runtime.
 
-![][image4]
-
-Figure 4: A visualization of the decisions present in a simplified scenario. The solution to this task requires multiple choices and execution steps within the ERP. 
+<div class="row mt-3 justify-content-center">
+    <div class="col-sm-8 mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/2026-04-27-coding-agents/4_Simple_Scenario_Visualization.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption text-start">
+    Figure 4: A visualization of the decisions present in a simplified scenario. The solution to this task requires multiple choices and execution steps within the ERP.
+</div> 
 
 ### Agent Harness
 
@@ -205,16 +226,20 @@ After each trial, our task verifier compares the PostgreSQL database with ground
 4. Policy Adherence: Did the agent follow all the rules outlined in the policy rulebook provided to it in the prompt?
 
 ## Results
-
 ### Success Out-Of-The-Box
 
 In the first trial of 10 easy scenarios, our coding agent using Claude Sonnet 4.5 reliably scores above 80% on the verifiers. These simple tasks include creating sales orders for one or two customers, selecting the cheapest vendor, and generating invoices. This consistent accuracy is impressive: even given limited documentation, the agent intuitively issued correct API calls and navigated Odoo's data model.
 
 The coding agent was so successful on these tasks that, in order to challenge the agent, we needed to scale up the complexity of the tasks to require the agents to make 5+ decisions and weigh 5+ constraints, at which point many domain-level resource allocation tasks became challenging even for humans to work out without computational assistance. 
 
-![][image5]  
-Figure 5: We test Claude Sonnet 4.5 and GPT-5 on 20 scenarios across a gradient of difficulty from Easy to Hardest. We observe that increasing the complexity of the scenarios by increasing the number of constraints results in a breakdown of performance. We separate our evaluation of each scenario into 4 dimensions: Constraint Resolution, Resource Optimization, Traceability, and Policy Adherence.   
-Noticeably, GPT-5 tended to come up with comparable or even better-quality business plans as Claude 4.5 Sonnet, but GPT-5 struggled more with correct API calls, which caused lower scores across the board.
+<div class="row mt-3 justify-content-center">
+    <div class="col-sm-12 mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/2026-04-27-coding-agents/5_Results_Chart.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption text-start">
+    Figure 5: We test Claude Sonnet 4.5 and GPT-5 on 20 scenarios across a gradient of difficulty from Easy to Hardest. We observe that increasing the complexity of the scenarios by increasing the number of constraints results in a breakdown of performance. We separate our evaluation of each scenario into 4 dimensions: Constraint Resolution, Resource Optimization, Traceability, and Policy Adherence. Noticeably, GPT-5 tended to come up with comparable or even better-quality business plans as Claude 4.5 Sonnet, but GPT-5 struggled more with correct API calls, which caused lower scores across the board.
+</div>
 
 ### Failure Modes
 
@@ -230,8 +255,7 @@ One class of such problems can be described as “lazy code heuristics” that d
 
 The most salient example involved a task policy to *only order goods and components from American vendors*. Rather than filtering vendors by address, the agent used a glaringly wrong lazy heuristic based on the vendor’s name.
 
-{% raw %}
-{% highlight python %}
+{% highlight python linenos %}
 # Policy in the request:
 #   "...order only from American vendors..."
 # Relevant Odoo data model:
@@ -251,7 +275,6 @@ is_american = (
     # etc.
 )
 {% endhighlight %}
-{% endraw %}
 
 The agent correctly understands the natural‑language policy (“order only from American vendors”) but implements it with a crude string‑matching shortcut. The business intent is correct, but the code that is supposed to enforce it is wrong.
 
@@ -259,9 +282,14 @@ The agent correctly understands the natural‑language policy (“order only fro
 
 We also observed the case where the agent hallucinates at the business layer, causing it to write functional code that ultimately leads it astray. In one case, the agent is tasked with scrapping faulty LED Boards that were found to have condensation damage. The agent asserts that if the boards have water damage, they *must* be stored in a fridge, even though the setup actually has them in the warehouse with all others. When it queries the imaginary “fridge” location, it finds no results, so it assumes those boards have been discarded.
 
-![][image6]
-
-Figure 6: The agent hallucinates that damaged LED boards must be stored in the fridge, without any supporting evidence in the system, leading to functional-but-misleading code.
+<div class="row mt-3 justify-content-center">
+    <div class="col-sm-6 mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/2026-04-27-coding-agents/6_LED_Hallucination.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption text-start">
+    Figure 6: The agent hallucinates that damaged LED boards must be stored in the fridge, without any supporting evidence in the system, leading to functional-but-misleading code.
+</div>
 
 The direction of failure flips from the previous case. The code is locally coherent given the agent's belief that there is a "Fridge" storage location. The query execution makes sense, but the underlying reasoning is hallucinated.
 
@@ -271,9 +299,14 @@ In some runs, agents failed to internalize explicit rulebook constraints at all.
 
 For an employee vacation request HR scenario, a policy stating that "*days off should be consecutive*" was simply ignored during reasoning, leading to prohibited fragmented schedules. 
 
-![][image7]
-
-Figure 7: The agent disregards the policy requirement to only schedule consecutive days off, and incorrectly claims successful completion.
+<div class="row mt-3 justify-content-center">
+    <div class="col-sm-6 mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/2026-04-27-coding-agents/7_HR_Policy_Violation.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption text-start">
+    Figure 7: The agent disregards the policy requirement to only schedule consecutive days off, and incorrectly claims successful completion.
+</div>
 
 In more complex procurement tasks, margin requirements and lead-time rules were dropped despite being queried correctly from the ERP. Here, the break happens one step earlier: the agent simply does not carry certain rules forward through its reasoning at all.
 
@@ -300,7 +333,7 @@ But when scenarios were loaded with complex decisions and constraints, failures 
 
 **In order to get coding agents to generalize, we should measure and optimize code and business-level correctness together.** 
 
-# Conclusion
+## Conclusion
 
 Coding agents represent a promising path toward general-purpose AI. They are already widely adopted, rapidly improving, and operate in the same medium through which most white-collar work already flows: software. 
 
