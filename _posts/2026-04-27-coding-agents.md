@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: Can Coding Agents be General Agents?
-description: Coding agents have seen rapid capability and adoption gains. Recently, a trend has emerged: users are applying coding agents to general automation tasks beyond software engineering. In this post, we investigate whether coding agents can generalize to end-to-end business process automation. We define success as the effective bidirectional translation between business-level goals and code-level implementation, and identify an evaluation gap: existing benchmarks test one of the two, but rarely both together. We bridge this gap with a case study, evaluating a coding agent on practical business operation tasks using an open-core Enterprise Resource Planning system, Odoo. We find that the agent reliably completes simple tasks but exhibits characteristic failures on complex tasks: lazy code heuristics, hallucinated domain knowledge, and silent policy violations. Our results suggest that bridging domain logic and code execution is a key bottleneck for general-purpose agents.
+description: "Coding agents have seen rapid capability and adoption gains. Recently, a trend has emerged: users are applying coding agents to general automation tasks beyond software engineering. In this post, we investigate whether coding agents can generalize to end-to-end business process automation. We define success as the effective bidirectional translation between business-level goals and code-level implementation, and identify an evaluation gap: existing benchmarks test one of the two, but rarely both together. We bridge this gap with a case study, evaluating a coding agent on practical business operation tasks using an open-core Enterprise Resource Planning system, Odoo. We find that the agent reliably completes simple tasks but exhibits characteristic failures on complex tasks: lazy code heuristics, hallucinated domain knowledge, and silent policy violations. Our results suggest that bridging domain logic and code execution is a key bottleneck for general-purpose agents."
 date: 2026-04-27
 future: true
 htmlwidgets: true
@@ -39,30 +39,30 @@ bibliography: 2026-04-27-coding-agents.bib
 #   - please use this format rather than manually creating a markdown table of contents.
 toc:
   - name: Introduction
-      subsections:
+    subsections:
       - name: How Does a Coding Agent Work?
       - name: Can Coding Agents be General Agents?
-  - name: Defining Success: How Can Coding Agents Accurately Generalize?
+  - name: "Defining Success: How Can Coding Agents Accurately Generalize?"
   - name: What Gets Measured Gets Improved
     subsections:
       - name: Code and System-Level Benchmarks
       - name: Tool-Use and Domain Reasoning Benchmarks
-  - name: Case Study: Coding Agent in Enterprise Resource Planning
-      subsections:
+  - name: "Case Study: Coding Agent in Enterprise Resource Planning"
+    subsections:
       - name: Setup
       - name: Environment
       - name: Task Structure
       - name: Agent Harness
       - name: Evaluation
   - name: Results
-        subsections:
+    subsections:
       - name: Success Out-Of-The-Box
       - name: Failure Modes
         subsections:
-        - name: Lazy Code Heuristics
-        - name: Hallucinations in the Business Layer
-        - name: Ignored Policy Constraints
-        - name: Overconfidence
+          - name: Lazy Code Heuristics
+          - name: Hallucinations in the Business Layer
+          - name: Ignored Policy Constraints
+          - name: Overconfidence
   - name: Analysis
   - name: Conclusion
 
@@ -87,21 +87,21 @@ _styles: >
 ---
 ## Introduction
 
-Immediately after the emergence of Transformer-based Language Models (LMs), researchers and developers began exploring LM code generation.1 With heavy investment into training models specifically on coding data, LMs have seen dramatic improvements in coding capabilities.2 The top score on SWE-Bench Verified, a benchmark testing models on real-world software engineering tasks, jumped from 49% to 78% through 2025\.3, 4 The newer Terminal Bench, released in May of 2025, has also tracked frontier LLMs improving from 43% to 61% on complex tasks in the terminal, including analyzing data, calling APIs, and addressing security vulnerabilities.5 
+Immediately after the emergence of Transformer-based Language Models (LMs), researchers and developers began exploring LM code generation.<d-cite key="lu2021plbart"></d-cite> With heavy investment into training models specifically on coding data, LMs have seen dramatic improvements in coding capabilities.<d-cite key="chen2021codex"></d-cite> The top score on SWE-Bench Verified, a benchmark testing models on real-world software engineering tasks, jumped from 49% to 78% through 2025\.<d-cite key="jimenez2023swebench"></d-cite><d-cite key="openai2024swebenchverified"></d-cite> The newer Terminal Bench, released in May of 2025, has also tracked frontier LLMs improving from 43% to 61% on complex tasks in the terminal, including analyzing data, calling APIs, and addressing security vulnerabilities.<d-cite key="terminalbench2024"></d-cite> 
 
-Propelled by compounding improvement, frontier labs have been developing coding agents, which augment foundation models with a shell sandbox and code editor to help with coding tasks. These agents, including Claude Code, Codex CLI, and Gemini CLI, have seen explosive developer adoption: since launching in May 2025, Claude Code now receives over 4.4 million downloads every week.6
+Propelled by compounding improvement, frontier labs have been developing coding agents, which augment foundation models with a shell sandbox and code editor to help with coding tasks. These agents, including Claude Code, Codex CLI, and Gemini CLI, have seen explosive developer adoption: since launching in May 2025, Claude Code now receives over 4.4 million downloads every week.<d-cite key="anthropic2025claudecode"></d-cite> 
 
-Surprisingly, people are using these coding agents for purposes far beyond the realm of software development. Users report applying coding agents to tax preparation, creating content, personal knowledge management, and more.7 At their core, “coding” agents are versatile: even Anthropic has acknowledged this shift, rebranding its Claude Code SDK to the general "Agent SDK." 8 This makes sense: knowledge work takes place entirely in software \- business apps, browsers, spreadsheets, databases. Coding agents are naturally fit to meet knowledge work where it lives.
+Surprisingly, people are using these coding agents for purposes far beyond the realm of software development. Users report applying coding agents to tax preparation, creating content, personal knowledge management, and more.<d-cite key="steipete2025claudecomputer"></d-cite> At their core, “coding” agents are versatile: even Anthropic has acknowledged this shift, rebranding its Claude Code SDK to the general "Agent SDK."<d-cite key="anthropic2024agentsdk"></d-cite> This makes sense: knowledge work takes place entirely in software \- business apps, browsers, spreadsheets, databases. Coding agents are naturally fit to meet knowledge work where it lives.
 
 ### How Does a Coding Agent Work?
 
-Broadly, an “AI Agent” is a system that autonomously pursues a goal by perceiving its environment, reasoning iteratively, and taking actions, with minimal human intervention. Typically, agents take action through manually predefined tools.9 Often, these tools include complex business logic that reduces the reasoning burden on the LM itself. For example, a simple banking agent may be provided: “read\_balance,” “withdraw\_money,” “deposit\_money,” and “transfer\_funds.” In practice, each of these tools would include guardrails to prevent prohibited transactions or incorrect calculations.
+Broadly, an “AI Agent” is a system that autonomously pursues a goal by perceiving its environment, reasoning iteratively, and taking actions, with minimal human intervention. Typically, agents take action through manually predefined tools.<d-cite key="schick2023toolformer"></d-cite> Often, these tools include complex business logic that reduces the reasoning burden on the LM itself. For example, a simple banking agent may be provided: “read\_balance,” “withdraw\_money,” “deposit\_money,” and “transfer\_funds.” In practice, each of these tools would include guardrails to prevent prohibited transactions or incorrect calculations.
 
 Coding agents are a specific type of agent designed for software engineering tasks. These agents operate within software development environments (repositories, IDEs, sandboxes, terminals). *Coding agents are unique because they write, execute, and debug their own scripts at runtime,* *instead of being limited to a pre-defined set of tools.* They are especially versatile: they can quickly orient themselves in new software environments by querying for information, installing packages to unlock new capabilities, and resolving errors from logs. This self-governed feedback loop unlocks utility beyond software development: coding agents can theoretically plug-and-play into *any* software environment—offering an interesting pathway to generalizability.  
 ![][1_Coding_Agent_Architecture.png]  
 Figure 1: The coding agent is an emergent agent architecture, which allows a model to create its own code tools at runtime and iterate with the help of code outputs and error logs.
 
-Experimentally, past research has shown that training models on code improves general reasoning. For instance, Aryabumi et al. find that adding code data to pre-training yields up to 8.2% relative improvement on natural language reasoning benchmarks.10 Separately, Wang et al. demonstrate that their CodeAct agent, using executable Python scripts, outperformed JSON and text-based tool-calling alternatives with a 20% higher success rate on non-coding tasks.11 Furthermore, the continued scaling of test-time compute means coding agents are increasingly adept at attacking multi-hour, project-scale tasks.12 Practically and experimentally, there is visible potential in applying coding agents to general tasks.
+Experimentally, past research has shown that training models on code improves general reasoning. For instance, Aryabumi et al. find that adding code data to pre-training yields up to 8.2% relative improvement on natural language reasoning benchmarks.<d-cite key="aryabumi2024codepretraining"></d-cite> Separately, Wang et al. demonstrate that their CodeAct agent, using executable Python scripts, outperformed JSON and text-based tool-calling alternatives with a 20% higher success rate on non-coding tasks.<d-cite key="islam2024codeact"></d-cite> Furthermore, the continued scaling of test-time compute means coding agents are increasingly adept at attacking multi-hour, project-scale tasks.<d-cite key="openai2025gpt51"></d-cite> Practically and experimentally, there is visible potential in applying coding agents to general tasks.
 
 ### Can Coding Agents be General Agents?
 
@@ -112,7 +112,7 @@ This post makes three contributions:
 1. **A framework for coding-agent generalization.**   
    We propose that success as a general business agent requires bidirectional translation between business/domain and code/software layers, and articulate four concrete capabilities this entails.  
 2. **An evaluation gap analysis.**   
-   We survey prominent benchmarks and show that code-level evals (SWE-bench, Terminal-Bench) lack business context while domain-reasoning evals (τ-bench,13 BFCL14) lack complex code execution \- leaving full-stack translation underexplored.  
+   We survey prominent benchmarks and show that code-level evals (SWE-bench, Terminal-Bench) lack business context while domain-reasoning evals (τ-bench,<d-cite key="zhang2024taubench"></d-cite> BFCL <d-cite key="gorilla2024bfcl"></d-cite>) lack complex code execution \- leaving full-stack translation underexplored.  
 3. **Observations from an ERP case study.**   
    We deploy frontier coding agents on a production-grade Enterprise Resource Planning (ERP) software instance with multi-constraint Sales-to-Fulfilment and HR operational tasks, document distinct failure modes at the business-code boundary, and propose asymmetric feedback from the environment to explain persistent agent overconfidence.
 
@@ -283,7 +283,7 @@ Whether the solution was optimal, suboptimal, or incorrect, one thing remained c
 
 This reflects an asymmetry in the feedback profile of the environment. At the code level, the agent receives concrete signals: bad imports, malformed payloads, and incorrect field names, which all produce exceptions. Conversely, we observe that at the business level, feedback is sparse. The inbuilt ERP guardrails reject obviously invalid and ill-formatted interactions but won't flag suboptimal choices or policy violations. Only when we run the task verifier do we see that the outcome was wrong.
 
-This pattern can be viewed as a form of specification gaming: the agent optimizes for the measurable proxy (code execution) rather than the true objective (business correctness). Recent work demonstrates that gaming behaviors generalize, models trained to exploit easily-discovered reward signals will zero-shot transfer those behaviors to novel environments.15 Coding agents may be particularly susceptible: their training provides dense, unambiguous feedback at the code layer (tests pass, scripts execute, errors resolve), effectively teaching that execution success equals task success. This learned prior does not transfer when code is merely the *medium* for a business objective rather than the objective itself. These silent failures point to the untrustworthiness of the agent’s own pass/fail conclusions.
+This pattern can be viewed as a form of specification gaming: the agent optimizes for the measurable proxy (code execution) rather than the true objective (business correctness). Recent work demonstrates that gaming behaviors generalize, models trained to exploit easily-discovered reward signals will zero-shot transfer those behaviors to novel environments.<d-cite key="anthropic2025rewardtampering"></d-cite> Coding agents may be particularly susceptible: their training provides dense, unambiguous feedback at the code layer (tests pass, scripts execute, errors resolve), effectively teaching that execution success equals task success. This learned prior does not transfer when code is merely the *medium* for a business objective rather than the objective itself. These silent failures point to the untrustworthiness of the agent’s own pass/fail conclusions.
 
 ## Analysis
 
@@ -306,4 +306,4 @@ Coding agents represent a promising path toward general-purpose AI. They are alr
 
 After examining performance in our simulations, we find that coding agents have advantageous traits that help them succeed in settings where the goal is not to write code, but to achieve correct real-world outcomes *through* code in complex systems. If these agents can learn to reason reliably across unmapped business domains while retaining their native fluency in code, the distance to broad automation shrinks considerably.  
 
-Today, coding agents still do not generalize to complex business workflows. Domain-specific tools and guardrails will remain important in the near term \- but they address failure modes one instance at a time. This risks running afoul of the bitter lesson15, and history suggests that general methods eventually win.
+Today, coding agents still do not generalize to complex business workflows. Domain-specific tools and guardrails will remain important in the near term \- but they address failure modes one instance at a time. This risks running afoul of the bitter lesson<d-cite key="sutton2019bitterlesson"></d-cite>, and history suggests that general methods eventually win.
