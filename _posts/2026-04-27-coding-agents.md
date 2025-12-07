@@ -41,7 +41,7 @@ toc:
   - name: Introduction
     subsections:
       - name: How Does a Coding Agent Work?
-  - name: "Defining Success: How Can Coding Agents Accurately Generalize?"
+  - name: Defining Success
   - name: What Gets Measured Gets Improved
     subsections:
       - name: Code and System-Level Benchmarks
@@ -119,7 +119,7 @@ This post makes three contributions:
 3. **Observations from an ERP case study.**   
    We deploy frontier coding agents on a production-grade Enterprise Resource Planning (ERP) software instance with multi-constraint Sales-to-Fulfilment and HR operational tasks, document distinct failure modes at the business-code boundary, and propose asymmetric feedback from the environment to explain persistent agent overconfidence.
 
-## Defining Success: How Can Coding Agents Accurately Generalize?
+## Defining Success
 
 **In order to be a reliable general agent, a coding agent must be excellent at translating between the business/domain layer and the code/software layer.** In practice, that means it can:
 
