@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: Can Coding Agents be General Agents?
-description: "Coding agents have seen rapid capability and adoption gains. Recently, a trend has emerged: users are applying coding agents to general automation tasks beyond software engineering. In this post, we investigate whether coding agents can generalize to end-to-end business process automation. We define success as the effective bidirectional translation between business-level goals and code-level implementation, and identify an evaluation gap: existing benchmarks test one of the two, but rarely both together. We bridge this gap with a case study, evaluating a coding agent on practical business operation tasks using an open-core Enterprise Resource Planning system, Odoo. We find that the agent reliably completes simple tasks but exhibits characteristic failures on complex tasks: lazy code heuristics, hallucinated domain knowledge, and silent policy violations. Our results suggest that bridging domain logic and code execution is a key bottleneck for general-purpose agents."
+description: "As coding agents have seen rapid capability and adoption gains, users are applying them to general tasks beyond software engineering. In this post, we investigate whether coding agents can successfully generalize to end-to-end business process automation. We identify gaps in current evaluations, and conduct a case study to evaluate a coding agent on practical business tasks in an open-core Enterprise Resource Planning system. We find that the agent reliably completes simple tasks but exhibits characteristic failures on complex tasks, suggesting that bridging domain logic and code execution is a key bottleneck to generalizability."
 date: 2026-04-27
 future: true
 htmlwidgets: true
