@@ -48,7 +48,7 @@ toc:
           - name: Hallucinations in the Business Layer
           - name: Ignored Policy Constraints
           - name: Overconfidence
-  - name: Analysis
+  - name: Synthesis
   - name: Conclusion
 
 # Below is an example of injecting additional post-specific styles.
@@ -299,7 +299,7 @@ This reflects an asymmetry in the feedback profile of the environment. At the co
 
 This pattern can be viewed as a form of specification gaming: the agent optimizes for the measurable proxy (code execution) rather than the true objective (business correctness). Recent work demonstrates that gaming behaviors generalize, models trained to exploit easily-discovered reward signals will zero-shot transfer those behaviors to novel environments.<d-cite key="denison2024sycophancy"></d-cite> Coding agents may be particularly susceptible: their training provides dense, unambiguous feedback at the code layer (tests pass, scripts execute, errors resolve), effectively teaching that execution success equals task success. This learned prior does not transfer when code is merely the *medium* for a business objective rather than the objective itself. These silent failures point to the untrustworthiness of the agent’s own pass/fail conclusions.
 
-## Analysis
+## Synthesis
 
 The most striking result is that the coding agent can immediately complete straightforward tasks out-of-the-box, at near-human efficacy. With no ERP-specific tooling, the agent reliably executed real business workflows \- creating orders, selecting vendors, generating invoices \- that would typically require dedicated integrations. 
 
