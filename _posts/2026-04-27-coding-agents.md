@@ -15,20 +15,6 @@ mermaid:
 # Anonymize when submitting
 authors:
   - name: Anonymous
-<<<<<<< HEAD
-    url: "https://en.wikipedia.org/wiki/Albert_Einstein"
-    affiliations:
-      name: Anonymous
-  - name: Anonymous
-    url: "https://en.wikipedia.org/wiki/Boris_Podolsky"
-    affiliations:
-      name: Anonymous
-  - name: Anonymous
-    url: "https://en.wikipedia.org/wiki/Nathan_Rosen"
-    affiliations:
-      name: Anonymous
-=======
->>>>>>> 630c299e12f09548876f827258502d14dee51352
 
 # must be the exact same name as your blogpost
 bibliography: 2026-04-27-coding-agents.bib
