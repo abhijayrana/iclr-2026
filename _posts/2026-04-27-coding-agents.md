@@ -20,15 +20,15 @@ authors:
   - name: Anonymous
     url: "https://en.wikipedia.org/wiki/Albert_Einstein"
     affiliations:
-      name: IAS, Princeton
+      name: Anonymous
   - name: Anonymous
     url: "https://en.wikipedia.org/wiki/Boris_Podolsky"
     affiliations:
-      name: IAS, Princeton
+      name: Anonymous
   - name: Anonymous
     url: "https://en.wikipedia.org/wiki/Nathan_Rosen"
     affiliations:
-      name: IAS, Princeton
+      name: Anonymous
 
 # must be the exact same name as your blogpost
 bibliography: 2026-04-27-coding-agents.bib
