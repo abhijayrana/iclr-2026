@@ -131,8 +131,6 @@ This post makes three contributions:
 
 4. Encode that plan back into the software: implementing the decision as code/API calls that update the system state to match the intended business outcome.
 
-Current models are certainly excellent at both code generation tasks and reasoning through domain-specific problems. Yet, in today’s research ecosystem, there are limited ways to measure this cross-skill capability.
-
 ## What Gets Measured Gets Improved
 
 It’s worth examining how we evaluate frontier models and agents today. **Current evaluations largely fall into two camps: those that test code-level competence and those that test business/domain-level reasoning**. The full-stack, bi-directional *translation* between them is undercovered.
